@@ -5,6 +5,7 @@ package windows
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"testing"
 	"time"
 
@@ -64,6 +65,7 @@ var _ = Describe("(Integration) [Windows Nodegroups]", func() {
 		if params.UnownedCluster {
 			unownedCluster = unowned.NewCluster(clusterConfig)
 			clusterConfig.VPC = unownedCluster.VPC
+			time.Sleep(time.Minute)
 			cmd := params.EksctlUtilsCmd.WithArgs(
 				"write-kubeconfig",
 				"--verbose", "4",
@@ -95,6 +97,8 @@ var _ = Describe("(Integration) [Windows Nodegroups]", func() {
 				WithStdin(bytes.NewReader(data))
 			Expect(cmd).To(RunSuccessfully())
 
+			time.Sleep(time.Minute)
+
 			cmd = params.EksctlUtilsCmd.WithArgs(
 				"install-vpc-controllers",
 				"--verbose", "4",
@@ -102,6 +106,8 @@ var _ = Describe("(Integration) [Windows Nodegroups]", func() {
 				"--cluster", clusterConfig.Metadata.Name,
 			)
 			Expect(cmd).To(RunSuccessfully())
+			time.Sleep(time.Minute)
+
 		} else {
 			data, err := json.Marshal(clusterConfig)
 			Expect(err).ToNot(HaveOccurred())
